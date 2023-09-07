@@ -148,18 +148,21 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
         value={{...state, toast, changePosition, deleteToast}}
         >
             {children}
-            <div
-            className={`fixed flex flex-col gap-2 ${pos ? newP : p}`}
-            >
-                <AnimatePresence>
-                {state.toasts.map(toast => (
-                    <Toast 
-                    key={toast.id}
-                    toast={toast}
-                    />
-                ))}
-                </AnimatePresence>
-            </div>
+            <AnimatePresence>
+                <motion.div
+                className={`fixed flex flex-col gap-2 ${pos ? newP : p}`}
+                layout
+                >
+                    <AnimatePresence>
+                    {state.toasts.map(toast => (
+                        <Toast 
+                        key={toast.id}
+                        toast={toast}
+                        />
+                    ))}
+                    </AnimatePresence>
+                </motion.div>
+            </AnimatePresence>
         </ToastContext.Provider>
     )
 }

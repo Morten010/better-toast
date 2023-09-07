@@ -1,22 +1,21 @@
-import { createContext, useReducer, useState, useId } from "react";
+import { createContext, useReducer, useState, useId, useEffect } from "react";
 import {CiWarning} from "react-icons/ci"
 import {BsCheckLg} from "react-icons/bs"
 import {AiOutlineClose, AiOutlineExclamationCircle} from "react-icons/ai"
+import useToast from "../hooks/useToast";
 
 type ToastContext = {
     toasts: ToastProps[]
     changePosition: (x: PositionProps) => void
     toast: (x: ToastProps) => void 
+    deleteToast: (x: ToastProps) => void 
 }
 
 export const ToastContext = createContext<ToastContext | null>({
     toasts: [],
-    changePosition(x) {
-        
-    },
-    toast(x) {
-        
-    },
+    changePosition(x) {},
+    toast(x) {},
+    deleteToast(x) {},
 })
 
 type PositionProps = "tl" | "tr" | "bl" | "br";
@@ -52,6 +51,11 @@ type Action =
       type: ActionType["ADD_TOAST"]
       toast: ToastProps
     }
+  | {
+    type: ActionType["DELETE_TOAST"]
+    toast: ToastProps
+    }
+
 
 const ToastReducer = (state: State, action: Action) => {
     switch(action.type){
@@ -59,6 +63,14 @@ const ToastReducer = (state: State, action: Action) => {
             return {
                 ...state,
                 toasts: [...state.toasts, action.toast]
+            }
+        case "DELETE_TOAST": 
+            const filteredToasts = state.toasts.filter(toast => {
+                if(toast.id !== action.toast.id) return toast
+            })
+            return {
+                ...state,
+                toasts: [...filteredToasts]
             }
         default:
             return state
@@ -71,12 +83,7 @@ type MemoryState = {
 
 const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
     const [state, dispatch] = useReducer(ToastReducer, {
-        toasts: [{
-            id: Date.now(),
-            title: "Test toast",
-            description: "Working :)",
-            variant: "success"
-        }]
+        toasts: []
     })
     const [pos, setPos] = useState<PositionProps | undefined>(undefined)
 
@@ -87,7 +94,7 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
         })
     }
 
-    const deleteToast = () => {
+    const deleteToast = (toast: ToastProps) => {
         dispatch({
             type: "DELETE_TOAST",
             toast: toast
@@ -137,8 +144,7 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
 
     return(
         <ToastContext.Provider 
-        value={{...state, toast, changePosition}}
-        
+        value={{...state, toast, changePosition, deleteToast}}
         >
             {children}
             <div
@@ -146,11 +152,8 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
             >
                 {state.toasts.map((toast, index) => (
                     <Toast 
-                    id={toast.id}
-                    key={index + toast.title}
-                    title={toast.title} 
-                    description={toast.description}
-                    variant={toast.variant}
+                    key={index}
+                    toast={toast}
                     />
                 ))}
             </div>
@@ -158,12 +161,14 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
     )
 }
 
-const Toast = ({title, description, variant} : ToastProps) => {
+const Toast = ({toast} : {toast: ToastProps}) => {
+    const [percentage, setPercentage] = useState(0)
+    const {deleteToast} = useToast()
     let card = ""
     let icon = ""
     let logo;
     
-    switch(variant){
+    switch(toast.variant){
         case "danger": 
             card = "border-red-600/30 bg-red-200"
             icon = "bg-red-600"
@@ -186,6 +191,28 @@ const Toast = ({title, description, variant} : ToastProps) => {
             logo = <AiOutlineExclamationCircle className="text-3xl" />
     }
     
+    useEffect(() => {
+      const int = setInterval(() => {
+        setPercentage(prev => prev + 2.3)
+      },100)
+
+      return () => {
+        clearInterval(int)
+      }
+    }, [percentage])
+    
+    useEffect(() => {
+        const remove = setTimeout(() => {
+            deleteToast(toast)
+        }, 5000);
+    
+      return () => {
+        clearTimeout(remove)
+      }
+    }, [])
+    
+    
+
     return (
         <div
         className={`flex rounded relative overflow-hidden border  min-w-[250px] max-w-[400px] w-full ${card}`}
@@ -201,15 +228,20 @@ const Toast = ({title, description, variant} : ToastProps) => {
                 <h3
                 className="font-semibold"
                 >
-                    {title}
+                    {toast.title}
                 </h3>
                 <p>
-                    {description}
+                    {toast.description}
                 </p>
                 <AiOutlineClose 
-                onClick={() => {}}
+                onClick={() => deleteToast(toast)}
                 className="absolute right-2 top-2"
                 />
+                <div
+                className={`absolute h-[2px] bg-white bottom-0 left-0 transition-all`}
+                style={{width: percentage + "%"}}
+                >
+                </div>
             </div>
         </div>
     )

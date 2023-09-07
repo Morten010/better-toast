@@ -5,9 +5,9 @@ import useToast from './hooks/useToast'
 
 function App() {
   const [position, setPosition] = useState<PositionProps>("bl")
-  const [variant, setVariant] = useState<ToastVariants>("default")
-  const [desc, setDesc] = useState("")
-  const [title, setTitle] = useState("")
+  const [variant, setVariant] = useState<ToastVariants>("danger")
+  const [desc, setDesc] = useState("Be carefull")
+  const [title, setTitle] = useState("Danger")
 
   const {changePosition, toast} = useToast()
 
@@ -116,11 +116,13 @@ function App() {
      className='p-2'
      >
       <Toast 
-          id={1}
-          title={title}
-          description={desc}
-          variant={variant}
-        />
+        toast={{
+          id: 1,
+          title: title,
+          description: desc,
+          variant: variant
+        }}
+      />
      </div>
 
       {/* add notification */}

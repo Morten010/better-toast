@@ -3,6 +3,7 @@ import {CiWarning} from "react-icons/ci"
 import {BsCheckLg} from "react-icons/bs"
 import {AiOutlineClose, AiOutlineExclamationCircle} from "react-icons/ai"
 import useToast from "../hooks/useToast";
+import { AnimatePresence, motion } from "framer-motion";
 
 type ToastContext = {
     toasts: ToastProps[]
@@ -147,16 +148,19 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
         value={{...state, toast, changePosition, deleteToast}}
         >
             {children}
-            <div
-            className={`fixed flex flex-col gap-2 ${pos ? newP : p}`}
-            >
-                {state.toasts.map((toast, index) => (
-                    <Toast 
-                    key={index}
-                    toast={toast}
-                    />
-                ))}
-            </div>
+            <AnimatePresence>
+                <motion.div
+                className={`fixed flex flex-col gap-2 ${pos ? newP : p}`}
+                layout
+                >
+                    {state.toasts.map((toast, index) => (
+                        <Toast 
+                        key={toast.id}
+                        toast={toast}
+                        />
+                    ))}
+                </motion.div>
+            </AnimatePresence>
         </ToastContext.Provider>
     )
 }
@@ -193,7 +197,7 @@ const Toast = ({toast} : {toast: ToastProps}) => {
     
     useEffect(() => {
       const int = setInterval(() => {
-        setPercentage(prev => prev + 2.3)
+        setPercentage(prev => prev + 2.2)
       },100)
 
       return () => {

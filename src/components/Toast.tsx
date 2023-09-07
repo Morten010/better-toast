@@ -148,19 +148,18 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
         value={{...state, toast, changePosition, deleteToast}}
         >
             {children}
-            <AnimatePresence>
-                <motion.div
-                className={`fixed flex flex-col gap-2 ${pos ? newP : p}`}
-                layout
-                >
-                    {state.toasts.map((toast, index) => (
-                        <Toast 
-                        key={toast.id}
-                        toast={toast}
-                        />
-                    ))}
-                </motion.div>
-            </AnimatePresence>
+            <div
+            className={`fixed flex flex-col gap-2 ${pos ? newP : p}`}
+            >
+                <AnimatePresence>
+                {state.toasts.map(toast => (
+                    <Toast 
+                    key={toast.id}
+                    toast={toast}
+                    />
+                ))}
+                </AnimatePresence>
+            </div>
         </ToastContext.Provider>
     )
 }
@@ -218,8 +217,21 @@ const Toast = ({toast} : {toast: ToastProps}) => {
     
 
     return (
-        <div
-        className={`flex rounded relative overflow-hidden border  min-w-[250px] max-w-[400px] w-full ${card}`}
+        <motion.div
+        initial={{
+            left: "-100%",
+            opacity: 0
+        }}
+        animate={{
+            left: "0%",
+            opacity: 1
+        }}
+        exit={{
+            left: "100%",
+            opacity: 0
+
+        }}
+        className={`flex rounded relative overflow-hidden border min-w-[250px] max-w-[400px] w-full ${card}`}
         >
             <div
             className={`p-2 aspect-square flex flex-col justify-center text-white ${icon}`}
@@ -247,7 +259,7 @@ const Toast = ({toast} : {toast: ToastProps}) => {
                 >
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
 

@@ -149,9 +149,8 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
         >
             {children}
             <AnimatePresence>
-                <motion.div
+                <div
                 className={`fixed flex flex-col gap-2 ${pos ? newP : p}`}
-                layout
                 >
                     <AnimatePresence>
                     {state.toasts.map(toast => (
@@ -161,7 +160,7 @@ const ToastProvider = ({ children, position = "tl"}: ToastProviderProps) => {
                         />
                     ))}
                     </AnimatePresence>
-                </motion.div>
+                </div>
             </AnimatePresence>
         </ToastContext.Provider>
     )

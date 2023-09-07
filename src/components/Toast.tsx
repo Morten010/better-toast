@@ -223,7 +223,7 @@ const Toast = ({toast} : {toast: ToastProps}) => {
                 {logo}
             </div>
             <div
-            className="p-4 text-ellipsis"
+            className="p-2 pr-4 text-ellipsis"
             >
                 <h3
                 className="font-semibold"

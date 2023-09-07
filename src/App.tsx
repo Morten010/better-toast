@@ -15,7 +15,7 @@ function App() {
   return (
     <main className='px-2 py-5'>
       <h1
-      className='text-xl font-semibold'
+      className='text-xl font-semibold my-2'
       >
         Better-Toast
       </h1>
@@ -24,6 +24,11 @@ function App() {
       </p>
 
       {/* positions */}
+      <h2
+      className='text-xl font-semibold mt-2'
+      >
+        Position
+      </h2>
       <div
       className='grid grid-cols-2 gap-2 mt-4'
       >
@@ -68,6 +73,11 @@ function App() {
       <div
       className='flex flex-col py-4 gap-2'
       >
+        <h2
+        className='text-xl font-semibold mt-2'
+        >
+          Variants
+        </h2>
         <label
         className='font-semibold'
         >
